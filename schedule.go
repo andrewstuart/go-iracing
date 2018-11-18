@@ -23,7 +23,8 @@ type Status struct {
 	HTTPCode int `json:"http_code"`
 }
 
-func GetSchedule() (*ScheduleRes, error) {
+// GetSchedule returns the current
+func (c *Client) GetSchedule() (*ScheduleRes, error) {
 	res, err := http.Get("https://www.iracing.com/live/schedule/")
 	if err != nil {
 		return nil, err
@@ -31,9 +32,10 @@ func GetSchedule() (*ScheduleRes, error) {
 	defer res.Body.Close()
 
 	var s ScheduleRes
-	json.NewDecoder(res.Body).Decode(&s)
+	err = json.NewDecoder(res.Body).Decode(&s)
 	if err != nil {
 		return nil, err
 	}
 
+	return &s, nil
 }

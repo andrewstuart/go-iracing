@@ -1,4 +1,5 @@
 package iracing
 
-type client struct {
+// A Client holds state related to iRacing session
+type Client struct {
 }
