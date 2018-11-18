@@ -37,7 +37,7 @@ var scheduleCmd = &cobra.Command{
 			if c.EventAt.Before(time.Now()) || c.EventAt.After(time.Now().Add(12*time.Hour)) {
 				continue
 			}
-			_, err = fmt.Fprintf(tw, "%s\t%s\n", plusReplacer.Replace(c.Bannertext), c.EventAt.Format(time.RFC1123))
+			_, err = fmt.Fprintf(tw, "%s\t%s\n", c.Bannertext, c.EventAt.Format(time.RFC1123))
 			if err != nil {
 				log.Fatal(err)
 			}

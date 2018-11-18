@@ -3,6 +3,7 @@ package iracing
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -46,7 +47,28 @@ type Series struct {
 	Mpr             int              `json:"mpr"`
 	SeasonSchedules []SeasonSchedule `json:"seasonSchedules"`
 	SeriesID        int              `json:"seriesID"`
-	SeriesName      string           `json:"seriesName"`
+	SeriesName      IRString         `json:"seriesName"`
+}
+
+func (s Series) CurrentSchedule() *SeasonSchedule {
+	for _, sched := range s.SeasonSchedules {
+		fmt.Printf("sched.SeasonStartDate = %+v\n", sched.SeasonStartDate)
+		if time.Since(sched.SeasonStartDate.Time) < 12*7*24*time.Hour {
+			return &sched
+		}
+	}
+	return nil
+}
+
+func (s Series) NextSchedule() *SeasonSchedule {
+	var latest *SeasonSchedule
+	for i, sched := range s.SeasonSchedules {
+		d := time.Until(sched.SeasonStartDate.Time)
+		if d > 0 && (latest == nil || d < time.Until(latest.SeasonStartDate.Time)) {
+			latest = &s.SeasonSchedules[i]
+		}
+	}
+	return latest
 }
 
 type UnixTime struct {
@@ -75,8 +97,26 @@ type SeasonSchedule struct {
 	SeasonStartDate      UnixTime `json:"seasonStartDate"`
 }
 
+func (ss SeasonSchedule) NextRace() *Race {
+	if len(ss.Races) < 1 {
+		return nil
+	}
+	if len(ss.Races) < 2 {
+		return &ss.Races[0]
+	}
+
+	var next *Race
+	for i, race := range ss.Races {
+		d := time.Until(race.StartTime.Time)
+		if d > 0 && (next == nil || race.StartTime.Before(next.StartTime.Time)) {
+			next = &ss.Races[i]
+		}
+	}
+	return next
+}
+
 type Race struct {
-	EndTime                 int            `json:"endTime"`
+	EndTime                 UnixTime       `json:"endTime"`
 	PreRegCount             int            `json:"preRegCount"`
 	RaceLapLimit            int            `json:"raceLapLimit"`
 	RaceTimeLimitMinutes    int            `json:"raceTimeLimitMinutes"`
@@ -89,9 +129,9 @@ type Race struct {
 	StandingStart           bool           `json:"standingStart"`
 	StartTime               UnixTime       `json:"startTime"`
 	TimeOfDay               UnixTime       `json:"timeOfDay"`
-	TrackConfigName         string         `json:"trackConfigName"`
+	TrackConfigName         IRString       `json:"trackConfigName"`
 	TrackID                 int            `json:"trackID"`
-	TrackName               string         `json:"trackName"`
+	TrackName               IRString       `json:"trackName"`
 	TrackRaceGuideImg       string         `json:"trackRaceGuideImg"`
 	WeatherFogDensity       int            `json:"weatherFogDensity"`
 	WeatherRelativeHumidity int            `json:"weatherRelativeHumidity"`

@@ -6,6 +6,7 @@ import (
 	"os"
 	"sort"
 	"text/tabwriter"
+	"time"
 
 	"astuart.co/iracing"
 	"github.com/spf13/cobra"
@@ -17,8 +18,11 @@ var racesCmd = &cobra.Command{
 	Use:   "races",
 	Short: "Get a list of races today",
 	Run: func(cmd *cobra.Command, args []string) {
-		c := iracing.Client{}
-		err := c.Login(viper.GetString("iracing.user"), viper.GetString("iracing.password"))
+		c, err := iracing.NewClient()
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = c.Login(viper.GetString("iracing.user"), viper.GetString("iracing.password"))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -28,35 +32,65 @@ var racesCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		tw := tabwriter.NewWriter(os.Stdout, 0, 3, 1, ' ', 0)
-		fmt.Fprintln(tw, "Series\tTrack\tStart")
+		sort.Slice(guide.Series, func(i, j int) bool {
+			ni, nj := guide.Series[i].CurrentSchedule(), guide.Series[j].CurrentSchedule()
+			if ni == nil {
+				return false
+			}
+			if nj == nil {
+				return true
+			}
+
+			ri, rj := ni.NextRace(), nj.NextRace()
+			if ri == nil {
+				return false
+			}
+			if rj == nil {
+				return true
+			}
+
+			return ri.StartTime.Before(rj.StartTime.Time)
+		})
+
+		tw := tabwriter.NewWriter(os.Stdout, 0, 3, 2, ' ', 0)
+		fmt.Fprintln(tw, "Series\tTrack\tStart\tUntil\tLength")
 
 		for _, series := range guide.Series {
 			if !series.Eligible {
 				continue
 			}
-
-			var latest *iracing.SeasonSchedule
-			for _, sched := range series.SeasonSchedules {
-				if latest == nil || sched.SeasonStartDate.After(latest.SeasonStartDate.Time) {
-					latest = &sched
-					continue
-				}
+			ns := series.CurrentSchedule()
+			if ns == nil {
+				break
 			}
-
-			if len(latest.Races) == 0 {
-				continue
+			nr := ns.NextRace()
+			if nr == nil {
+				break
 			}
-
-			sort.Slice(latest.Races, func(i, j int) bool {
-				return latest.Races[i].StartTime.Before(latest.Races[j].StartTime.Time)
-			})
-
-			lr := latest.Races[len(latest.Races)-1]
-			fmt.Fprintf(tw, "%s\t%s\t%s\n", dePlus(series.SeriesName), dePlus(lr.TrackName), lr.StartTime)
+			dur := hmString(nr.EndTime.Sub(nr.StartTime.Time))
+			// if nr.RaceTimeLimitMinutes <= 0 {
+			// 	dur = fmt.Sprintf("%d laps", nr.RaceLapLimit)
+			// }
+			fmt.Fprintf(
+				tw,
+				"%s\t%s\t%s\t%s\t%s\n",
+				series.SeriesName,
+				nr.TrackName,
+				nr.StartTime.Format(time.RFC1123),
+				hmString(time.Until(nr.StartTime.Time)),
+				dur,
+			)
 		}
 		tw.Flush()
 	},
+}
+
+func hmString(d time.Duration) string {
+	dh := d.Truncate(time.Hour)
+	h := dh.Hours()
+	m := (d - dh).Truncate(time.Minute).Minutes()
+
+	return fmt.Sprintf("%02.0f:%02.0f", h, m)
 }
 
 func init() {
