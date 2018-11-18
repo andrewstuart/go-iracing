@@ -1,8 +1,11 @@
 package iracing
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 type ScheduleRes struct {
@@ -12,11 +15,26 @@ type ScheduleRes struct {
 }
 
 type Contents struct {
-	Bannerhideat string `json:"bannerhideat"`
-	Bannershowat string `json:"bannershowat"`
-	Bannertext   string `json:"bannertext"`
-	Eventat      string `json:"eventat"`
-	Now          string `json:"now"`
+	Bannerhideat IRacingTime `json:"bannerhideat"`
+	Bannershowat IRacingTime `json:"bannershowat"`
+	Bannertext   string      `json:"bannertext"`
+	EventAt      IRacingTime `json:"eventat"`
+	Now          IRacingTime `json:"now"`
+}
+
+type IRacingTime struct {
+	time.Time
+}
+
+func (i *IRacingTime) UnmarshalJSON(bs []byte) error {
+	bs = bytes.Split(bytes.Trim(bs, "\""), []byte{'.'})[0]
+	unix, err := strconv.Atoi(string(bs))
+	if err != nil {
+		return err
+	}
+
+	i.Time = time.Unix(int64(unix)/1000, 0)
+	return nil
 }
 
 type Status struct {

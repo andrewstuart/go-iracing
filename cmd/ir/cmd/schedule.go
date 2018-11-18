@@ -2,35 +2,53 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"sort"
+	"text/tabwriter"
+	"time"
 
+	"astuart.co/iracing"
 	"github.com/spf13/cobra"
 )
 
 // scheduleCmd represents the schedule command
 var scheduleCmd = &cobra.Command{
 	Use:   "schedule",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Get the iRacing schedule",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("schedule called")
+		c := iracing.Client{}
+
+		s, err := c.GetSchedule()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		sort.Slice(s.Contents, func(i, j int) bool {
+			return s.Contents[i].EventAt.Before(s.Contents[j].EventAt.Time)
+		})
+
+		tw := tabwriter.NewWriter(os.Stdout, 0, 3, 1, ' ', 0)
+		_, err = fmt.Fprintln(tw, "Event\tStart")
+		if err != nil {
+			log.Fatal(err)
+		}
+		for _, c := range s.Contents {
+			if c.EventAt.Before(time.Now()) || c.EventAt.After(time.Now().Add(12*time.Hour)) {
+				continue
+			}
+			_, err = fmt.Fprintf(tw, "%s\t%s\n", plusReplacer.Replace(c.Bannertext), c.EventAt.Format(time.RFC1123))
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		err = tw.Flush()
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(scheduleCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// scheduleCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// scheduleCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
