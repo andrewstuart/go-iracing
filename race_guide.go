@@ -3,7 +3,6 @@ package iracing
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -52,7 +51,6 @@ type Series struct {
 
 func (s Series) CurrentSchedule() *SeasonSchedule {
 	for _, sched := range s.SeasonSchedules {
-		fmt.Printf("sched.SeasonStartDate = %+v\n", sched.SeasonStartDate)
 		if time.Since(sched.SeasonStartDate.Time) < 12*7*24*time.Hour {
 			return &sched
 		}
