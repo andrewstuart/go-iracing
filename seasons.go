@@ -97,6 +97,6 @@ type Track struct {
 }
 
 type CarsInClass struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int      `json:"id"`
+	Name IRString `json:"name"`
 }
