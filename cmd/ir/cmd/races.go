@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"astuart.co/iracing"
+	"astuart.co/go-iracing"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,6 +22,7 @@ var racesCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		err = c.Login(viper.GetString("iracing.user"), viper.GetString("iracing.password"))
 		if err != nil {
 			log.Fatal(err)

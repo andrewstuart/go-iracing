@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"astuart.co/iracing"
+	"astuart.co/go-iracing"
 	"github.com/spf13/cobra"
 )
 

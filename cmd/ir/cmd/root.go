@@ -34,14 +34,17 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
+var home string
+
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
+		var err error
 		// Find home directory.
-		home, err := homedir.Dir()
+		home, err = homedir.Dir()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
