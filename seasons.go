@@ -36,7 +36,11 @@ func (o GetSeasonOpts) Encode() string {
 	return u.Encode()
 }
 
-func (c *Client) GetSeasons(o GetSeasonOpts) ([]Season, error) {
+func (c *Client) GetSeasons(o *GetSeasonOpts) ([]Season, error) {
+	if o == nil {
+		o = &GetSeasonOpts{}
+	}
+
 	u, err := url.Parse(seasonURL)
 	if err != nil {
 		return nil, err
@@ -82,10 +86,10 @@ type CarClass struct {
 }
 
 type Track struct {
-	Config    string   `json:"config"`
+	Config    IRString `json:"config"`
 	ID        int      `json:"id"`
 	Lowername IRString `json:"lowername"`
-	Name      string   `json:"name"`
+	Name      IRString `json:"name"`
 	PkgID     int      `json:"pkgid"`
 	Priority  int      `json:"priority"`
 	RaceWeek  int      `json:"raceweek"`

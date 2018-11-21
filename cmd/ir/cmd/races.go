@@ -13,17 +13,21 @@ import (
 	"github.com/spf13/viper"
 )
 
+func getClient() (*iracing.Client, error) {
+	c, err := iracing.NewClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return c, c.Login(viper.GetString("iracing.user"), viper.GetString("iracing.password"))
+}
+
 // racesCmd represents the races command
 var racesCmd = &cobra.Command{
 	Use:   "races",
 	Short: "Get a list of races today",
 	Run: func(cmd *cobra.Command, args []string) {
-		c, err := iracing.NewClient()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		err = c.Login(viper.GetString("iracing.user"), viper.GetString("iracing.password"))
+		c, err := getClient()
 		if err != nil {
 			log.Fatal(err)
 		}
