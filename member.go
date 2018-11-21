@@ -92,6 +92,7 @@ type Member struct {
 	Watched        bool   `json:"watched"`
 }
 
+// Helmet holds data about the helmet color/etc.
 type Helmet struct {
 	C1 string `json:"c1"`
 	C2 string `json:"c2"`
