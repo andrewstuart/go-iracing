@@ -11,15 +11,15 @@ import (
 
 var plusReplacer = strings.NewReplacer("+", " ")
 
-type IRString string
+type String string
 
-func (i *IRString) UnmarshalJSON(bs []byte) error {
+func (i *String) UnmarshalJSON(bs []byte) error {
 	bs = bytes.Trim(bs, "\"")
 	st, err := url.QueryUnescape(string(bs))
 	if err != nil {
 		st = plusReplacer.Replace(string(bs))
 	}
-	*i = IRString(st)
+	*i = String(st)
 	return nil
 }
 
@@ -46,7 +46,7 @@ type Series struct {
 	Mpr             int              `json:"mpr"`
 	SeasonSchedules []SeasonSchedule `json:"seasonSchedules"`
 	SeriesID        int              `json:"seriesID"`
-	SeriesName      IRString         `json:"seriesName"`
+	SeriesName      String           `json:"seriesName"`
 }
 
 func (s Series) CurrentSchedule() *SeasonSchedule {
@@ -127,9 +127,9 @@ type Race struct {
 	StandingStart           bool           `json:"standingStart"`
 	StartTime               UnixTime       `json:"startTime"`
 	TimeOfDay               UnixTime       `json:"timeOfDay"`
-	TrackConfigName         IRString       `json:"trackConfigName"`
+	TrackConfigName         String         `json:"trackConfigName"`
 	TrackID                 int            `json:"trackID"`
-	TrackName               IRString       `json:"trackName"`
+	TrackName               String         `json:"trackName"`
 	TrackRaceGuideImg       string         `json:"trackRaceGuideImg"`
 	WeatherFogDensity       int            `json:"weatherFogDensity"`
 	WeatherRelativeHumidity int            `json:"weatherRelativeHumidity"`

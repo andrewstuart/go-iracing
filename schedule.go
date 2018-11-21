@@ -15,18 +15,20 @@ type ScheduleRes struct {
 }
 
 type Contents struct {
-	Bannerhideat IRacingTime `json:"bannerhideat"`
-	Bannershowat IRacingTime `json:"bannershowat"`
-	Bannertext   string      `json:"bannertext"`
-	EventAt      IRacingTime `json:"eventat"`
-	Now          IRacingTime `json:"now"`
+	Bannerhideat Time   `json:"bannerhideat"`
+	Bannershowat Time   `json:"bannershowat"`
+	Bannertext   string `json:"bannertext"`
+	EventAt      Time   `json:"eventat"`
+	Now          Time   `json:"now"`
 }
 
-type IRacingTime struct {
+// Time handles converting string-wrappted unix time, sometime with
+// decimal, and turning it into an embedded time.Time.
+type Time struct {
 	time.Time
 }
 
-func (i *IRacingTime) UnmarshalJSON(bs []byte) error {
+func (i *Time) UnmarshalJSON(bs []byte) error {
 	bs = bytes.Split(bytes.Trim(bs, "\""), []byte{'.'})[0]
 	unix, err := strconv.Atoi(string(bs))
 	if err != nil {

@@ -70,7 +70,7 @@ type Season struct {
 	Quarter         int        `json:"quarter"`
 	SeasonID        int        `json:"seasonid"`
 	SeriesID        int        `json:"seriesid"`
-	SeriesShortName IRString   `json:"seriesshortname"`
+	SeriesShortName String     `json:"seriesshortname"`
 	Tracks          []Track    `json:"tracks"`
 	Year            int        `json:"year"`
 }
@@ -79,24 +79,24 @@ type CarClass struct {
 	CarsInClass []CarsInClass `json:"carsinclass"`
 	CustID      int           `json:"custid"`
 	ID          int           `json:"id"`
-	LowerName   IRString      `json:"lowername"`
-	Name        IRString      `json:"name"`
+	LowerName   String        `json:"lowername"`
+	Name        String        `json:"name"`
 	RelSpeed    int           `json:"relspeed"`
-	ShortName   IRString      `json:"shortname"`
+	ShortName   String        `json:"shortname"`
 }
 
 type Track struct {
-	Config    IRString `json:"config"`
-	ID        int      `json:"id"`
-	Lowername IRString `json:"lowername"`
-	Name      IRString `json:"name"`
-	PkgID     int      `json:"pkgid"`
-	Priority  int      `json:"priority"`
-	RaceWeek  int      `json:"raceweek"`
-	TimeOfDay int      `json:"timeOfDay"`
+	Config    String `json:"config"`
+	ID        int    `json:"id"`
+	Lowername String `json:"lowername"`
+	Name      String `json:"name"`
+	PkgID     int    `json:"pkgid"`
+	Priority  int    `json:"priority"`
+	RaceWeek  int    `json:"raceweek"`
+	TimeOfDay int    `json:"timeOfDay"`
 }
 
 type CarsInClass struct {
-	ID   int      `json:"id"`
-	Name IRString `json:"name"`
+	ID   int    `json:"id"`
+	Name String `json:"name"`
 }
