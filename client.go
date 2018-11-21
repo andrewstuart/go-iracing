@@ -1,6 +1,7 @@
 package iracing
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/url"
@@ -20,6 +21,16 @@ var LoginURL = "https://members.iracing.com/membersite/Login"
 // A Client holds state related to iRacing session
 type Client struct {
 	*http.Client
+}
+
+func (c *Client) JSON(u string, out interface{}) error {
+	res, err := c.Get(u)
+	if err != nil {
+		return errors.Wrap(err, "error performing get")
+	}
+	defer res.Body.Close()
+
+	return errors.Wrap(json.NewDecoder(res.Body).Decode(&out), "error decoding JSON")
 }
 
 var home string
