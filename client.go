@@ -81,8 +81,10 @@ func (c *Client) Login(user, password string) error {
 	}
 	cookies := c.Jar.Cookies(u)
 	if len(cookies) > 0 {
-		// TODO verify?
-		return nil
+		_, err := c.GetDriverCounts()
+		if err == nil {
+			return nil
+		}
 	}
 
 	v := url.Values{
