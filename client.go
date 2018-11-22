@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 
@@ -50,6 +51,10 @@ func NewClient() (*Client, error) {
 	}
 	if home != "" {
 		o.Filename = path.Join(home, ".config", "iracing.cookies")
+		err := os.MkdirAll(path.Dir(o.Filename), 0750)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	j, err := cookiejar.New(o)
