@@ -9,10 +9,54 @@ import (
 	"time"
 )
 
+// Category is the category of race
+type Category int
+
+//go:generate stringer -type Category -type LicenseClass
+const (
+	Oval Category = iota + 1
+	Road
+	Mud
+	RX
+)
+
+var (
+	// AllCats is a list of all categories
+	AllCats = []Category{Oval, Road, Mud, RX}
+
+	catByName = map[string]Category{}
+)
+
+func init() {
+	for _, c := range AllCats {
+		catByName[strings.ToLower(c.String())] = c
+	}
+}
+
+// LookupCategory returns the Category by its string name
+func LookupCategory(s string) Category {
+	return catByName[strings.ToLower(s)]
+}
+
+// A LicenseClass is the license class for a race
+type LicenseClass int
+
+// Known LicenseClasses
+const (
+	Rookie LicenseClass = iota + 1
+	D
+	C
+	B
+	A
+	Pro
+)
+
 var plusReplacer = strings.NewReplacer("+", " ")
 
+// A String is a URL-encoded string, common in the iRacing API
 type String string
 
+// UnmarshalJSON implements json unmarshaler
 func (i *String) UnmarshalJSON(bs []byte) error {
 	bs = bytes.Trim(bs, "\"")
 	st, err := url.QueryUnescape(string(bs))
@@ -40,7 +84,7 @@ type RaceGuideRes struct {
 }
 
 type Series struct {
-	CatID           int              `json:"catID"`
+	CatID           Category         `json:"catID"`
 	Eligible        bool             `json:"eligible"`
 	Image           string           `json:"image"`
 	Mpr             int              `json:"mpr"`
@@ -84,15 +128,15 @@ func (u *UnixTime) UnmarshalJSON(bs []byte) error {
 }
 
 type SeasonSchedule struct {
-	CarClasses           []int    `json:"carClasses"`
-	FixedSetup           bool     `json:"fixedSetup"`
-	LicenseGroup         int      `json:"licenseGroup"`
-	MultiClass           bool     `json:"multiClass"`
-	OpenPracticeDrivers  int      `json:"openPracticeDrivers"`
-	OpenPracticeSessions int      `json:"openPracticeSessions"`
-	Races                []Race   `json:"races"`
-	SeasonID             int      `json:"seasonID"`
-	SeasonStartDate      UnixTime `json:"seasonStartDate"`
+	CarClasses           []int        `json:"carClasses"`
+	FixedSetup           bool         `json:"fixedSetup"`
+	LicenseGroup         LicenseClass `json:"licenseGroup"`
+	MultiClass           bool         `json:"multiClass"`
+	OpenPracticeDrivers  int          `json:"openPracticeDrivers"`
+	OpenPracticeSessions int          `json:"openPracticeSessions"`
+	Races                []Race       `json:"races"`
+	SeasonID             int          `json:"seasonID"`
+	SeasonStartDate      UnixTime     `json:"seasonStartDate"`
 }
 
 func (ss SeasonSchedule) NextRace() *Race {

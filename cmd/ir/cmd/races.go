@@ -13,6 +13,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+func has(cats []iracing.Category, c iracing.Category) bool {
+	for _, cat := range cats {
+		if cat == c {
+			return true
+		}
+	}
+	return false
+}
+
 func getClient() (*iracing.Client, error) {
 	c, err := iracing.NewClient()
 	if err != nil {
@@ -58,12 +67,24 @@ var racesCmd = &cobra.Command{
 		})
 
 		tw := tabwriter.NewWriter(os.Stdout, 0, 3, 2, ' ', 0)
-		fmt.Fprintln(tw, "Series\tTrack\tStart\tUntil\tLength")
+		fmt.Fprintln(tw, "Series\tTrack\tReg\tStart\tUntil\tLength")
 
+		types := viper.GetStringSlice("types")
+		cats := iracing.AllCats
+
+		if len(types) > 0 {
+			cats = []iracing.Category{}
+			for _, t := range types {
+				cats = append(cats, iracing.LookupCategory(t))
+			}
+		}
+
+		all := viper.GetBool("all")
 		for _, series := range guide.Series {
-			if !series.Eligible {
+			if !(has(cats, series.CatID) && (all || series.Eligible)) {
 				continue
 			}
+
 			ns := series.CurrentSchedule()
 			if ns == nil {
 				break
@@ -78,9 +99,10 @@ var racesCmd = &cobra.Command{
 			// }
 			fmt.Fprintf(
 				tw,
-				"%s\t%s\t%s\t%s\t%s\n",
+				"%s\t%s\t%d\t%s\t%s\t%s\n",
 				series.SeriesName,
 				nr.TrackName,
+				nr.RegCount,
 				nr.StartTime.Format(time.RFC1123),
 				hmString(time.Until(nr.StartTime.Time)),
 				dur,
@@ -106,4 +128,10 @@ func init() {
 
 	racesCmd.Flags().StringP("password", "p", "", "iRacing password")
 	viper.BindPFlag("iracing.password", racesCmd.Flags().Lookup("password"))
+
+	racesCmd.Flags().BoolP("all", "a", false, "Show ineligible races as well")
+	viper.BindPFlag("all", racesCmd.Flags().Lookup("all"))
+
+	racesCmd.Flags().StringSliceP("category", "c", nil, "Categories of races to show")
+	viper.BindPFlag("types", racesCmd.Flags().Lookup("type"))
 }
