@@ -133,5 +133,5 @@ func init() {
 	viper.BindPFlag("all", racesCmd.Flags().Lookup("all"))
 
 	racesCmd.Flags().StringSliceP("category", "c", nil, "Categories of races to show")
-	viper.BindPFlag("types", racesCmd.Flags().Lookup("type"))
+	viper.BindPFlag("types", racesCmd.Flags().Lookup("category"))
 }
