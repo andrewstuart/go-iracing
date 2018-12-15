@@ -102,7 +102,7 @@ type Helmet struct {
 }
 
 type License struct {
-	CatID               int       `json:"catId"`
+	CatID               Category  `json:"catId"`
 	IRating             ScrewyInt `json:"iRating"`
 	LicColor            string    `json:"licColor"`
 	LicGroup            int       `json:"licGroup"`
