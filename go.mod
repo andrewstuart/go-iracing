@@ -9,6 +9,7 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.3.1
+	github.com/stretchr/testify v1.2.2
 	golang.org/x/net v0.0.0-20181207154023-610586996380
 	gopkg.in/errgo.v1 v1.0.0 // indirect
 	gopkg.in/retry.v1 v1.0.2 // indirect

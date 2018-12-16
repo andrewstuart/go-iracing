@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
+	"time"
 )
 
 const memberURL = "https://members.iracing.com/membersite/member/GetMember"
@@ -72,6 +73,18 @@ func (c Client) GetMember(custID int) (*Member, error) {
 	return &m, nil
 }
 
+type DMY struct {
+	time.Time
+}
+
+func (m *DMY) UnmarshalJSON(bs []byte) error {
+	bs = bytes.Trim(bs, "\"")
+
+	var err error
+	m.Time, err = time.Parse("02-01-2006", string(bs))
+	return err
+}
+
 // Member holds data about the current user.
 type Member struct {
 	AllowedSeasons []interface{} `json:"allowedSeasons"`
@@ -85,7 +98,7 @@ type Member struct {
 	HasReadTC      bool          `json:"hasReadTC"`
 	Helmet         Helmet        `json:"helmet"`
 	Licenses       []License     `json:"licenses"`
-	MemberSince    string        `json:"memberSince"`
+	MemberSince    DMY           `json:"memberSince"`
 	Profile        Profile
 	ReadPP         String `json:"readPP"`
 	ReadTC         String `json:"readTC"`
