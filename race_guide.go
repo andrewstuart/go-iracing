@@ -94,6 +94,9 @@ type Series struct {
 }
 
 func (s Series) CurrentSchedule() *SeasonSchedule {
+	if len(s.SeasonSchedules) == 1 {
+		return &s.SeasonSchedules[0]
+	}
 	for _, sched := range s.SeasonSchedules {
 		if time.Since(sched.SeasonStartDate.Time) < 12*7*24*time.Hour {
 			return &sched
@@ -158,6 +161,7 @@ func (ss SeasonSchedule) NextRace() *Race {
 }
 
 type Race struct {
+	EarthRotationSpeedup    float64        `json:"earth_rotation_speedup"`
 	EndTime                 UnixTime       `json:"endTime"`
 	PreRegCount             int            `json:"preRegCount"`
 	RaceLapLimit            int            `json:"raceLapLimit"`
@@ -168,6 +172,7 @@ type Race struct {
 	RubberSettings          RubberSettings `json:"rubberSettings"`
 	SessionID               int            `json:"sessionID"`
 	SessionTypeID           int            `json:"sessionTypeID"`
+	SimulatedStartTime      String         `json:"simulatedStartTime"`
 	StandingStart           bool           `json:"standingStart"`
 	StartTime               UnixTime       `json:"startTime"`
 	TimeOfDay               UnixTime       `json:"timeOfDay"`
@@ -218,4 +223,35 @@ func (f *FuelAndWeight) UnmarshalJSON(bs []byte) error {
 		}
 	}
 	return nil
+}
+
+// ByTime sorts by the start time of the next race
+type ByTime []Series
+
+func (b ByTime) Len() int {
+	return len(b)
+}
+
+func (b ByTime) Less(i int, j int) bool {
+	ni, nj := b[i].CurrentSchedule(), b[j].CurrentSchedule()
+	if ni == nil {
+		return false
+	}
+	if nj == nil {
+		return true
+	}
+
+	ri, rj := ni.NextRace(), nj.NextRace()
+	if ri == nil {
+		return false
+	}
+	if rj == nil {
+		return true
+	}
+
+	return ri.StartTime.Before(rj.StartTime.Time)
+}
+
+func (b ByTime) Swap(i int, j int) {
+	b[i], b[j] = b[j], b[i]
 }

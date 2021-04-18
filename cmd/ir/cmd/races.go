@@ -46,25 +46,7 @@ var racesCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		sort.Slice(guide.Series, func(i, j int) bool {
-			ni, nj := guide.Series[i].CurrentSchedule(), guide.Series[j].CurrentSchedule()
-			if ni == nil {
-				return false
-			}
-			if nj == nil {
-				return true
-			}
-
-			ri, rj := ni.NextRace(), nj.NextRace()
-			if ri == nil {
-				return false
-			}
-			if rj == nil {
-				return true
-			}
-
-			return ri.StartTime.Before(rj.StartTime.Time)
-		})
+		sort.Sort(iracing.ByTime(guide.Series))
 
 		tw := tabwriter.NewWriter(os.Stdout, 0, 3, 2, ' ', 0)
 		fmt.Fprintln(tw, "Series\tTrack\tReg\tStart\tUntil\tLength")
