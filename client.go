@@ -17,7 +17,7 @@ import (
 )
 
 // LoginURL is the URL for Login
-var LoginURL = "https://members.iracing.com/membersite/Login"
+var LoginURL = "https://members.iracing.com./membersite/Login"
 
 // A Client holds state related to iRacing session
 type Client struct {

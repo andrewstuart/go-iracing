@@ -5,12 +5,12 @@ import "fmt"
 // GetStats returns statistics for a given driver
 func (c Client) GetStats(custID int) (*Stats, error) {
 	var s Stats
-	err := c.JSON(fmt.Sprintf("http://members.iracing.com/memberstats/member/GetCareerStats?custid=%d", custID), &s.CareerStats)
+	err := c.JSON(fmt.Sprintf("http://members.iracing.com./memberstats/member/GetCareerStats?custid=%d", custID), &s.CareerStats)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.JSON(fmt.Sprintf("http://members.iracing.com/memberstats/member/GetYearlyStats?custid=%d", custID), &s.YearlyStats)
+	err = c.JSON(fmt.Sprintf("http://members.iracing.com./memberstats/member/GetYearlyStats?custid=%d", custID), &s.YearlyStats)
 	if err != nil {
 		return nil, err
 	}

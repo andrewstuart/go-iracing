@@ -13,7 +13,7 @@ func (c *Client) SubsessionResults(sess, cust int) (*SubsessionResults, error) {
 		"custid":       []string{fmt.Sprint(cust)},
 	}.Encode()
 
-	res, err := c.Post("http://members.iracing.com/membersite/member/GetSubsessionResults", "application/x-www-form-urlencoded", strings.NewReader(vals))
+	res, err := c.Post("http://members.iracing.com./membersite/member/GetSubsessionResults", "application/x-www-form-urlencoded", strings.NewReader(vals))
 	if err != nil {
 		return nil, err
 	}

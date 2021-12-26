@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const seasonURL = "https://members.iracing.com/membersite/member/GetSeasons"
+const seasonURL = "https://members.iracing.com./membersite/member/GetSeasons"
 
 // DefaultSeasonFields used by the client
 var DefaultSeasonFields = []string{"year", "quarter", "seriesshortname", "seriesid", "active", "catid", "carclasses", "tracks", "seasonid"}

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const memberURL = "https://members.iracing.com/membersite/member/GetMember"
+const memberURL = "https://members.iracing.com./membersite/member/GetMember"
 
 // GetSelf returns data about the currently-logged-in user.
 func (c Client) GetSelf() (*Member, error) {
@@ -31,7 +31,7 @@ var (
 
 // GetMember returns user data about the requested customer ID.
 func (c Client) GetMember(custID int) (*Member, error) {
-	res, err := c.Get(fmt.Sprintf("https://members.iracing.com/membersite/member/CareerStats.do?custid=%d", custID))
+	res, err := c.Get(fmt.Sprintf("https://members.iracing.com./membersite/member/CareerStats.do?custid=%d", custID))
 	if err != nil {
 		return nil, err
 	}

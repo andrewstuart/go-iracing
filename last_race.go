@@ -5,7 +5,7 @@ import "fmt"
 // GetLastRaces returns the last races for a Member.
 func (c Client) GetLastRaces(custID int) ([]LastRaceStats, error) {
 	var l []LastRaceStats
-	return l, c.JSON(fmt.Sprintf("https://members.iracing.com/memberstats/member/GetLastRacesStats?custid=%d", custID), &l)
+	return l, c.JSON(fmt.Sprintf("https://members.iracing.com./memberstats/member/GetLastRacesStats?custid=%d", custID), &l)
 }
 
 type LastRaceStats struct {

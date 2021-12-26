@@ -68,7 +68,7 @@ func (i *String) UnmarshalJSON(bs []byte) error {
 }
 
 func (c Client) GetRaceGuide() (*RaceGuideRes, error) {
-	res, err := c.Get("http://members.iracing.com/membersite/member/GetRaceGuide")
+	res, err := c.Get("http://members.iracing.com./membersite/member/GetRaceGuide")
 	if err != nil {
 		return nil, err
 	}

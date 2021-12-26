@@ -2,7 +2,7 @@ package iracing
 
 func (c *Client) GetDriverCounts() (*Counts, error) {
 	var ct Counts
-	return &ct, c.JSON("http://members.iracing.com/membersite/member/GetDriverCounts?invokedby=racepanel", &ct)
+	return &ct, c.JSON("http://members.iracing.com./membersite/member/GetDriverCounts?invokedby=racepanel", &ct)
 }
 
 type Counts struct {

@@ -45,7 +45,7 @@ type Status struct {
 
 // GetSchedule returns the current
 func (c *Client) GetSchedule() (*ScheduleRes, error) {
-	res, err := http.Get("https://www.iracing.com/live/schedule/")
+	res, err := http.Get("https://www.iracing.com./live/schedule/")
 	if err != nil {
 		return nil, err
 	}

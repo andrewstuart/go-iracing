@@ -8,7 +8,7 @@ import (
 )
 
 func (c Client) Search(term string) (*SearchResponse, error) {
-	addr := "https://members.iracing.com/membersite/member/GetDriverStatus?searchTerms=" + uglifyString(term)
+	addr := "https://members.iracing.com./membersite/member/GetDriverStatus?searchTerms=" + uglifyString(term)
 	res, err := c.Get(addr)
 	if err != nil {
 		return nil, err
